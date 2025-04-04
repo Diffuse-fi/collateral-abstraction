@@ -1,0 +1,10 @@
+# env
+.env
+
+#cache
+*__pycache__*
+
+# local addresses
+addresses/local
+addresses/local_2
+

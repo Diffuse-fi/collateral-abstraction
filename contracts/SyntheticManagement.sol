@@ -17,12 +17,12 @@
 pragma solidity 0.8.20;
 
 import {IAutomataDcapAttestationFee} from "./IAutomataDcapAttestationFee.sol";
-import {ISyntheticCoin} from "./ISyntheticCoin.sol";
+import {SyntheticCoin} from "./SyntheticCoin.sol";
 import {funcEnum, message} from "./Utils.sol";
 
 contract SyntheticManagement {
     IAutomataDcapAttestationFee public sgxQuoteVerifier;
-    ISyntheticCoin public syntheticCoin;
+    SyntheticCoin public syntheticCoin;
 
     address public immutable owner;
 
@@ -36,6 +36,7 @@ contract SyntheticManagement {
 
     constructor() {
         owner = msg.sender;
+        syntheticCoin = new SyntheticCoin();
     }
 
     function mrEnclaveUpdate(bytes32 mrEnclaveNew) external {

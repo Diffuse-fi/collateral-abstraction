@@ -3,3 +3,7 @@
 
 #cache
 *__pycache__*
+
+# local addresses
+addresses/anvil_1111
+addresses/anvil_2222

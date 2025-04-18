@@ -1,3 +1,6 @@
 [submodule "lib/openzeppelin-contracts"]
 	path = lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "lib/sgx_verifier_deployer"]
+	path = lib/sgx_verifier_deployer
+	url = https://github.com/Diffuse-fi/sgx-verifier-deployer

@@ -17,8 +17,14 @@
 pragma solidity 0.8.20;
 
 import {funcEnum, message} from "./Utils.sol";
+import {SrcCoin} from "./SrcERC20TestCoin.sol";
 
 contract PositionManagement{
+
+    SrcCoin public srcCoin;
+    bool srcCoinFlag = false;
+
+    address public immutable owner;
 
     uint80 public msgNonce;
     message[] messageDB;
@@ -26,26 +32,37 @@ contract PositionManagement{
 
     event messageEvent(uint256 msgNonce);
 
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function setSrcCoin(address token) external {
+        require(msg.sender == owner, "only owner can setSrcCoin");
+        require(srcCoinFlag == false, "setSrcCoin can be called only once");
+        srcCoin = SrcCoin(token);
+        srcCoinFlag = true;
+    }
+
     function balanceOf(address depositor) external view returns(uint256){
         return balance[depositor];
     }
 
-    function deposit() external payable {
-        balance[msg.sender] += msg.value;
-        messageHandler(msg.value, msg.sender, funcEnum.deposit);
+    function deposit(uint256 amount) external {
+        srcCoin.transferFrom(msg.sender, address(this), amount);
+        balance[msg.sender] += amount;
+        messageHandler(amount, msg.sender, funcEnum.deposit);
     }
 
     function withdraw(uint256 amount) external {
         require(balance[msg.sender] >= amount, "not enough funds to withdraw!");
-        payable(msg.sender).transfer(amount);
+        srcCoin.transfer(msg.sender, amount);
         balance[msg.sender] -= amount;
-
         messageHandler(amount, msg.sender, funcEnum.withdraw);
     }
 
-    function messageHandler(uint256 ethAmount, address depositor, funcEnum func) internal {
+    function messageHandler(uint256 usdAmount, address depositor, funcEnum func) internal {
         emit messageEvent(msgNonce);
-        messageDB.push(message(ethAmount, depositor, msgNonce, func));
+        messageDB.push(message(usdAmount, depositor, msgNonce, func));
         msgNonce = msgNonce + 1;
     }
 }

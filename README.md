@@ -3,7 +3,7 @@
 ## overview
 
 contracts/PositionManagement.sol is deployed on the source chain.
-contracts/SyntheticManagement.sol and contracts/SyntheticCoin.sol are deployed on the destination chain.
+contracts/SyntheticManagement.sol and contracts/SyntheticStablecoin.sol are deployed on the destination chain.
 
 Users use PositionManagement to deposit and withdraw funds. This emits event, collateral-watchtower proves EVM storage and submits to SyntheticManagement.
 

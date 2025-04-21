@@ -2,10 +2,10 @@ pragma solidity ^0.8.20;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract SyntheticCoin is ERC20 {
+contract SyntheticStablecoin is ERC20 {
     address immutable owner;
 
-    constructor() ERC20("SyntheticCoin", "TEST") {
+    constructor() ERC20("SyntheticStablecoin", "TEST") {
         owner = msg.sender;
     }
 

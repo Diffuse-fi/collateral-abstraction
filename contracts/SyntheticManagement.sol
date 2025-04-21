@@ -17,12 +17,12 @@
 pragma solidity 0.8.20;
 
 import {IAutomataDcapAttestationFee} from "./IAutomataDcapAttestationFee.sol";
-import {SyntheticCoin} from "./SyntheticCoin.sol";
+import {SyntheticStablecoin} from "./SyntheticStablecoin.sol";
 import {funcEnum, message} from "./Utils.sol";
 
 contract SyntheticManagement {
     IAutomataDcapAttestationFee public sgxQuoteVerifier;
-    SyntheticCoin public syntheticCoin;
+    SyntheticStablecoin public syntheticStablecoin;
 
     address public immutable owner;
 
@@ -36,7 +36,7 @@ contract SyntheticManagement {
 
     constructor() {
         owner = msg.sender;
-        syntheticCoin = new SyntheticCoin();
+        syntheticStablecoin = new SyntheticStablecoin();
     }
 
     function mrEnclaveUpdate(bytes32 mrEnclaveNew) external {
@@ -65,7 +65,7 @@ contract SyntheticManagement {
     }
 
     function processMessageZk(
-        uint256 ethAmount,    // storage slot 1
+        uint256 usdAmount,    // storage slot 1
         uint256 storageSlot2, // storage slot 2
         bytes calldata sgx_verification_journal,
         bytes calldata sgx_verification_seal
@@ -76,11 +76,11 @@ contract SyntheticManagement {
         // success returns custom output type:
         // https://github.com/automata-network/automata-dcap-attestation/blob/b49a9f296a5e0cd8b1f076ec541b1239199cadd2/contracts/verifiers/V3QuoteVerifier.sol#L154
         require(success, string(output));
-        processMessage(output, ethAmount, storageSlot2);
+        processMessage(output, usdAmount, storageSlot2);
     }
 
     function processMessageOnchain(
-        uint256 ethAmount,   // storage slot 1
+        uint256 usdAmount,   // storage slot 1
         uint256 storageSlot2, // storage slot 2
         bytes calldata sgx_quote
     ) external payable {
@@ -90,12 +90,12 @@ contract SyntheticManagement {
         // success returns custom output type:
         // https://github.com/automata-network/automata-dcap-attestation/blob/b49a9f296a5e0cd8b1f076ec541b1239199cadd2/contracts/verifiers/V3QuoteVerifier.sol#L154
         require(success, string(output));
-        processMessage(output, ethAmount, storageSlot2);
+        processMessage(output, usdAmount, storageSlot2);
     }
 
     function processMessage(
         bytes memory output,
-        uint256 ethAmount,   // storage slot 1
+        uint256 usdAmount,   // storage slot 1
         uint256 storageSlot2 // storage slot 2
     ) internal {
 
@@ -115,16 +115,16 @@ contract SyntheticManagement {
         }
 
 
-        require(bytes32(ethAmount) == bytes32(quoteStorageSlot1),    "storage slot 1 from input and from quote are not equal!");
+        require(bytes32(usdAmount) == bytes32(quoteStorageSlot1),    "storage slot 1 from input and from quote are not equal!");
         require(bytes32(storageSlot2) == bytes32(quoteStorageSlot2), "storage slot 2 from input and from quote are not equal!");
 
-        messageDB.push(message(ethAmount, depositor, nonce, func));
+        messageDB.push(message(usdAmount, depositor, nonce, func));
 
         if (func == funcEnum.deposit) {
-            syntheticCoin.mint(ethAmount);
+            syntheticStablecoin.mint(usdAmount);
         }
         if (func == funcEnum.withdraw) {
-            syntheticCoin.burn(ethAmount);
+            syntheticStablecoin.burn(usdAmount);
         }
 
         // TODO emit event

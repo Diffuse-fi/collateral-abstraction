@@ -22,8 +22,8 @@ enum funcEnum {
 }
 
 struct message {
-    uint256 ethAmount;
-    address depositor;
+    uint256 usdAmount;
+    uint160 depositor;
     uint80 nonce;
     funcEnum func;
 }

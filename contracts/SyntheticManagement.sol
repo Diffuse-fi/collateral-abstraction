@@ -99,7 +99,7 @@ contract SyntheticManagement {
         uint256 storageSlot2 // storage slot 2
     ) internal {
 
-        address depositor = address(uint160(storageSlot2));
+        uint160 depositor = uint160(storageSlot2);
         uint80 nonce = uint80(storageSlot2 >> 160);
         funcEnum func = funcEnum(uint8(storageSlot2 >> 240));
         nonceAssert(nonce);

@@ -5,7 +5,10 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract SrcCoin is ERC20 {
     address immutable owner;
 
-    constructor() ERC20("SrcCoin", "TEST") {
+    constructor(
+        string memory _name,
+        string memory _symbol
+    ) ERC20(_name, _symbol) {
         owner = msg.sender;
     }
 

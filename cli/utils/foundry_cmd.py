@@ -15,7 +15,7 @@ def cast_send_cmd(net, contract_address, func_name, func_arg):
     return cmd
 
 
-def forge_create_cmd(net, contract_sol):
+def forge_create_cmd(net, contract_sol, constructor_args=None):
     cmd = [
         "forge",
         "create",
@@ -24,5 +24,9 @@ def forge_create_cmd(net, contract_sol):
         "--private-key=" + os.getenv("PRIVATE_KEY"),
         "--broadcast"
     ]
+
+    if constructor_args is not None:
+        cmd.append("--constructor-args")
+        cmd.extend(constructor_args)
 
     return cmd

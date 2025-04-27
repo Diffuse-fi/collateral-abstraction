@@ -8,7 +8,9 @@ def call_contract(net, contract_address, func_name, func_arg=None):
 
     cmd = cast_send_cmd(net, contract_address, func_name, func_arg)
 
-    if func_name == "balanceOf(address)":
+    eth_calls = ["balanceOf(address)", "getCurrencyDeposit(address)", "getUsdDeposit(address)"]
+
+    if func_name in eth_calls:
         cmd[1] = "call"
 
     print(func_name, func_arg, end=' ... ')
@@ -17,8 +19,8 @@ def call_contract(net, contract_address, func_name, func_arg=None):
 
 
 
-def deploy(net, contract_name, contract_sol):
-    cmd = forge_create_cmd(net, contract_sol)
+def deploy(net, contract_name, contract_sol, constructor_args=None):
+    cmd = forge_create_cmd(net, contract_sol, constructor_args)
 
     stdout = run_command(cmd)
     address = stdout.split("Deployed to: ")[1].split("\n")[0]

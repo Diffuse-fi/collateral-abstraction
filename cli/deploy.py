@@ -4,10 +4,12 @@ from lib.sgx_verifier_deployer.script.utils.network import network_class, networ
 from utils.addresses import read_address
 
 
-def set_src_coin(net):
-    src_coin = read_address(net, "src_coin")
+def set_src_coin(net, coin_name, OCRate):
+    deploy(net, coin_name, "contracts/SrcERC20TestCoin.sol:SrcCoin", ["ERC20_" + coin_name + "_test_tokens", coin_name])
+    src_coin = read_address(net, coin_name)
     position_management = read_address(net, "position_management")
-    call_contract(net, position_management, "setSrcCoin(address)", [src_coin])
+    call_contract(net, position_management, "addCurrency(address)", [src_coin])
+    call_contract(net, position_management, "setOCRate(address, uint256)", [src_coin, OCRate])
 
 
 def main():
@@ -22,8 +24,10 @@ def main():
 
     if args.src is not None:
         deploy(args.src, "position_management", "contracts/PositionManagement.sol:PositionManagement")
-        deploy(args.src, "src_coin", "contracts/SrcERC20TestCoin.sol:SrcCoin")
-        set_src_coin(args.src)
+        set_src_coin(args.src, "testETH", "1500")
+        set_src_coin(args.src, "testBTC", "70000")
+        set_src_coin(args.src, "testUSDC", "1")
+        set_src_coin(args.src, "testUSDT", "1")
     if args.dst is not None:
         deploy(args.dst, "synthetic_management", "contracts/SyntheticManagement.sol:SyntheticManagement")
 
